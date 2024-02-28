@@ -19,18 +19,21 @@ export default async function handler(req, res) {
     const user = result.rows[0];
 
     if (!user) {
+      client.release();
       return res.status(404).json({ message: "Usuário não encontrado." });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
+      client.release();
       return res.status(404).json({ message: "Senha inválida!" });
     }
 
     client.release();
     res.json({ token: user.token, userId: user.id });
   } catch (error) {
+    client.release();
     console.error("Error executing query", error);
     res
       .status(500)

@@ -1,11 +1,11 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import "@/pages/global.scss";
 import React from "react";
 import App from "next/app";
 import Cookies from "js-cookie";
 import Router from "next/router";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "@/pages/global.scss";
 
 class MyApp extends App {
   componentDidMount() {
