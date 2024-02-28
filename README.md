@@ -1,3 +1,7 @@
+## Criação do banco
+
+Para criação das tabelas do banco de dados é necessário executar as funções que estão no arquivo database.sql
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
