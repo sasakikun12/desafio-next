@@ -25,7 +25,7 @@ export default async function createUser(req, res) {
         [username]
       );
       const newUser = newResult.rows[0];
-      console.log(newUser);
+
       client.release();
 
       return res.status(201).json({

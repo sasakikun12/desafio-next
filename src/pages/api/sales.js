@@ -1,23 +1,21 @@
-import { verifyJWT } from "@/middleware/jwtMiddleware";
 import pool from "@/database";
+import { verifyJWT } from "../../middleware/jwtMiddleware";
 
 async function handler(req, res) {
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
-  const { userId } = req.query;
-
   try {
+    const { name, description, value, quantity, type, userId } = req.body;
+    const link = req.body.link;
     const client = await pool.connect();
 
-    const result = await client.query(
-      "SELECT * FROM products WHERE userId = $1",
-      [userId]
+    await client.query(
+      "INSERT INTO products(name, userId, description, value, quantity, type, link) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [name, userId, description, value, quantity, type, link]
     );
-    const products = result.rows;
-
+    const products = { name, description, value, quantity, type, userId, link };
     client.release();
-
     return res.status(201).json({
       products,
     });

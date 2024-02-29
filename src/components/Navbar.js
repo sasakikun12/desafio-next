@@ -34,9 +34,9 @@ const Navbar = () => {
       <Container fluid>
         <NavbarBrand href="#">Controle de produtos e vendas</NavbarBrand>
         <Nav.Toggle aria-controls="basic-navbar-nav" />
-        <Nav.Collapse id="basic-navbar-nav">
-          <Menu className="me-auto">
-            <NavDropdown title={label} id="basic-nav-dropdown">
+        <Nav.Collapse id="basic-navbar-nav" className="justify-content-end">
+          <Menu>
+            <NavDropdown title={label} id="basic-nav-dropdown" align="end">
               <NavDropdown.Item onClick={handleSignOut}>Sair</NavDropdown.Item>
             </NavDropdown>
           </Menu>

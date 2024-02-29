@@ -1,17 +1,26 @@
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { getAllProducts, addProduct } from "@/resources/products";
+import {
+  getAllProducts,
+  getAllDiscounts,
+  removeProduct,
+} from "@/resources/products";
+import { getAllSales } from "@/resources/sales";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Container, Table, Button, Row, Col } from "react-bootstrap";
 import Navbar from "@/components/Navbar";
+import Modal from "@/components/Modal";
 import VerticalNavbar from "@/components/VerticalNav";
 
 export default function Home() {
   const [data, setData] = useState([]);
-  const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState("products");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAction, setSelectedAction] = useState("");
+  const [text, setText] = useState("");
+  const [edit, setEdit] = useState({});
   const router = useRouter();
   const token = Cookies.get("token");
   const username = Cookies.get("username");
@@ -19,42 +28,29 @@ export default function Home() {
 
   const isProduct = () => selected === "products";
   const isSale = () => selected === "sales";
-  const selectedButtonLabel = () =>
-    isProduct() ? "Novo produto" : isSale() ? "Nova venda" : "Novo Desconto";
-
-  const toggleModal = (item, action) => {
-    console.log("toggle modal");
-  };
 
   const removeObj = ({ token, id }) => {
-    console.log("remove obj");
-  };
-
-  const handleAddProduct = () => {
-    const product = {
-      name: "Produto 6",
-      description: "Produto Caro",
-      value: "120.00",
-      quantity: "1",
-      type: "digital",
-      userId: "26",
-      link: "http://google.com",
-    };
-    addProduct(token, product)
-      .then((response) => {
-        setProducts(response.data.products || []);
-        toast.success("Produto inserido com sucesso!");
+    removeProduct(token, id)
+      .then(() => {
+        setData(data.filter((product) => product.id !== id));
       })
       .catch((error) => {
         console.log(error);
-        toast.error("Falha ao inserir o novo produto");
+        toast.error("Falha ao buscar os produtos");
       });
+  };
+
+  const toggleModal = (item, action) => {
+    setModalOpen(!modalOpen);
+    setSelectedAction(action);
+    setEdit(item);
   };
 
   useEffect(() => {
     if (token && userId) {
       switch (selected) {
         case "products":
+          setText("Novo Produto");
           getAllProducts(token, userId)
             .then((response) => {
               setData(response.data.products || []);
@@ -65,10 +61,26 @@ export default function Home() {
             });
           break;
         case "sales":
-          console.log("sales");
+          setText("Nova Venda");
+          getAllSales(token, userId)
+            .then((response) => {
+              setData(response.data.products || []);
+            })
+            .catch((error) => {
+              console.log(error);
+              toast.error("Falha ao buscar as vendas");
+            });
           break;
         case "discounts":
-          console.log("discounts");
+          setText("Novo Desconto");
+          getAllDiscounts(token, userId)
+            .then((response) => {
+              setData(response.data.products || []);
+            })
+            .catch((error) => {
+              console.log(error);
+              toast.error("Falha ao buscar os descontos");
+            });
           break;
       }
     }
@@ -84,9 +96,12 @@ export default function Home() {
           <VerticalNavbar setSelected={setSelected} />
         </Col>
         <Col md={11}>
-          <Button className="my-4" onClick={handleAddProduct}>
-            {selectedButtonLabel()}
-          </Button>
+          <div className="d-flex justify-content-end rounded my-5">
+            <Button variant="primary" onClick={() => toggleModal({}, "create")}>
+              {text}
+            </Button>
+          </div>
+
           {data[0] ? (
             <Table striped bordered hover>
               <thead>
@@ -150,8 +165,11 @@ export default function Home() {
                       )}
                       <td>{listItem.value}</td>
                       <td>
-                        <Button onClick={() => toggleModal(listItem, "edit")}>
-                          Editar
+                        <Button
+                          variant="primary"
+                          onClick={() => toggleModal(listItem, "edit")}
+                        >
+                          {"Editar"}
                         </Button>
                       </td>
                       <td>
@@ -171,6 +189,18 @@ export default function Home() {
           )}
         </Col>
       </Row>
+      {modalOpen && (
+        <Modal
+          action={selectedAction}
+          isOpen={modalOpen}
+          toggleModal={toggleModal}
+          listItem={edit}
+          selected={selected}
+          userId={userId}
+          token={token}
+          setData={setData}
+        />
+      )}
     </Container>
   );
 }

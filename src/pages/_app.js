@@ -10,12 +10,15 @@ import { ToastContainer } from "react-toastify";
 class MyApp extends App {
   componentDidMount() {
     const token = Cookies.get("token");
+
     if (
       !token &&
       Router.pathname !== "/login" &&
       Router.pathname !== "/signup"
     ) {
       Router.push("/login");
+    } else if (token && Router.pathname === "/_error") {
+      Router.push("/home");
     }
   }
 

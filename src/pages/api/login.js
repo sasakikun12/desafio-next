@@ -33,7 +33,6 @@ export default async function handler(req, res) {
     client.release();
     res.json({ token: user.token, userId: user.id });
   } catch (error) {
-    client.release();
     console.error("Error executing query", error);
     res
       .status(500)

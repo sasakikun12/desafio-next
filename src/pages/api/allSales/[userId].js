@@ -10,13 +10,10 @@ async function handler(req, res) {
   try {
     const client = await pool.connect();
 
-    const result = await client.query(
-      "SELECT * FROM products WHERE userId = $1",
-      [userId]
-    );
+    const result = await client.query("SELECT * FROM sales WHERE userId = $1", [
+      userId,
+    ]);
     const products = result.rows;
-
-    client.release();
 
     return res.status(201).json({
       products,
@@ -25,7 +22,7 @@ async function handler(req, res) {
     console.error("Error executing query", error);
     return res.status(422).json({
       error: error.message,
-      message: "Failed to get all products",
+      message: "Failed to get all sales",
     });
   }
 }

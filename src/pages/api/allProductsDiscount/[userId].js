@@ -11,7 +11,7 @@ async function handler(req, res) {
     const client = await pool.connect();
 
     const result = await client.query(
-      "SELECT * FROM products WHERE userId = $1",
+      "SELECT * FROM productDiscounts WHERE userId = $1",
       [userId]
     );
     const products = result.rows;
@@ -25,7 +25,7 @@ async function handler(req, res) {
     console.error("Error executing query", error);
     return res.status(422).json({
       error: error.message,
-      message: "Failed to get all products",
+      message: "Failed to get all sales",
     });
   }
 }
